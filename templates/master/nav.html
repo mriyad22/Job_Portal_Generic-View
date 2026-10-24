@@ -1,0 +1,47 @@
+<nav class="navbar navbar-expand-lg bg-white border-bottom sticky-top" style="height:72px">
+  <div class="container">
+    <a class="navbar-brand fw-bold fs-4 text-dark" href="{% url 'home' %}">Job<span class="text-primary">Hub</span></a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"><span class="navbar-toggler-icon"></span></button>
+    <div class="collapse navbar-collapse" id="mainNav">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4 gap-lg-2">
+        <li class="nav-item">
+          <a class="nav-link fw-semibold" href="{% url 'home' %}">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link fw-semibold" href="{% url 'jb_list' %}">Browse Jobs</a>
+        </li>
+        {% if request.user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link fw-semibold" href="{% url 'profile' %}">Profile</a>
+          </li>
+          {% if request.user.user_type == 'Seeker' %}
+            <li class="nav-item">
+              <a class="nav-link fw-semibold" href="{% url 'my_applied' %}">My Applications</a>
+            </li>
+          {% endif %}
+          {% if request.user.user_type == 'Recruiter' %}
+            <li class="nav-item">
+              <a class="nav-link fw-semibold" href="{% url 'jb_post' %}">Post a Job</a>
+            </li>
+          {% endif %}
+        {% endif %}
+      </ul>
+      <div class="ml-5">
+        <form method='get' action="{% url 'jb_list' %}" class="d-flex ml-5" role="search">
+          <input class="form-control me-2" type="search" placeholder="Search jobs..." name="q" value="{{ keyword|default:'' }}" aria-label="Search"/>
+          <button class="btn btn-outline-primary btn-pill" type="submit">Search</button>
+        </form>
+      </div>
+
+      <div class="d-flex align-items-center gap-2">
+        {% if request.user.is_authenticated %}
+          <span class="d-none d-md-inline small text-muted">Hi, {{ request.user.display_name|default:request.user.username }}</span>
+          <form method="post" action="{% url 'logout_page' %}" class="m-0">{% csrf_token %}<button type="submit" class="btn btn-outline-dark btn-pill">Logout</button></form>
+        {% else %}
+          <a href="{% url 'login_page' %}" class="btn btn-outline-primary btn-pill">Login</a>
+          <a href="{% url 'register_page' %}" class="btn btn-primary btn-pill">Get Started</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</nav>

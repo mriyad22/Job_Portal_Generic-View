@@ -1,0 +1,44 @@
+{% extends 'master/base.html' %}
+{% block title %}
+  My Applications | JobHub
+{% endblock %}
+{% block content %}
+  <section class="section pt-5">
+    <div class="container">
+      <div class="mb-4">
+        <span class="eyebrow">Seeker dashboard</span><h1 class="fw-bold mt-2 mb-1">My Applications</h1><p class="text-muted-custom">Track the jobs you have applied for.</p>
+      </div>
+      <div class="row g-4">
+        {% for x in data %}
+          <div class="col-12 col-md-6 col-xl-4">
+            <div class="job-card p-4 h-100 d-flex flex-column">
+              <div class="d-flex gap-3">
+                {% if x.applied_by.posted_by.logo %}
+                  <img src="{{ x.applied_by.posted_by.logo.url }}" class="company-logo" alt="Company logo" />
+                {% else %}
+                  <div class="company-logo d-flex align-items-center justify-content-center">🏢</div>
+                {% endif %}
+                <div>
+                  <span class="badge rounded-pill badge-soft">{{ x.applied_by.category }}</span><h5 class="fw-bold mt-2 mb-1">{{ x.applied_by.jb_title }}</h5><div class="small text-muted-custom">{{ x.applied_by.posted_by.company_name }}</div>
+                </div>
+              </div>
+              <p class="small text-muted-custom mt-3">{{ x.applied_by.jb_description|truncatewords:20 }}</p>
+              <div class="d-flex flex-wrap gap-2">
+                <span class="info-chip">💼 {{ x.applied_by.shift }}</span><span class="info-chip">💰 {{ x.applied_by.salary }}</span>
+              </div>
+              <div class="mt-auto pt-3 mt-3 border-top d-flex justify-content-between">
+                <span class="small text-muted-custom">Applied: {{ x.apply_at }}</span><a href="{{ x.resume.url }}" target="_blank" class="btn btn-outline-primary btn-sm btn-pill">Resume</a>
+              </div>
+            </div>
+          </div>
+        {% empty %}
+          <div class="col-12">
+            <div class="empty-state">
+              <div class="fs-1">📨</div><h4 class="fw-bold">No applications yet</h4><p class="text-muted-custom">Browse available jobs and submit your first application.</p><a href="{% url 'jb_list' %}" class="btn btn-primary btn-pill">Browse Jobs</a>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+{% endblock %}
