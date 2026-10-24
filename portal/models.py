@@ -17,7 +17,7 @@ class UserModel(AbstractUser):
 
 class RecruiterProfileModel(models.Model):
     company_name = models.CharField(max_length=255, null=True)
-    logo = models.ImageField(upload_to='company_logo', null=True)
+    logo = models.ImageField(upload_to='media/company_logo', null=True)
     address = models.TextField()
     phone = models.CharField(max_length=15, null=True)
     recruiter = models.OneToOneField(
@@ -29,7 +29,7 @@ class RecruiterProfileModel(models.Model):
     
 
 class SeekerProfileModel(models.Model):
-    image = models.ImageField(upload_to='seekerImage', null=True)
+    image = models.ImageField(upload_to='media/seekerImage', null=True)
     phone = models.CharField(max_length=15, null=True)
     address = models.TextField()
     seeker = models.OneToOneField(
@@ -80,7 +80,7 @@ class JobPostModel(models.Model):
     
 
 class JobApplyModel(models.Model):
-    resume = models.FileField(upload_to='se_resume')
+    resume = models.FileField(upload_to='media/se_resume')
     apply_at = models.DateField(auto_now_add=True, null=True)
 
     jb_applyer = models.ForeignKey(
