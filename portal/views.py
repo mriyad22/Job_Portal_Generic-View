@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.contrib.auth import login, logout, update_session_auth_hash
+from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.views import LoginView, LogoutView
@@ -8,17 +8,18 @@ from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, FormView, ListView, UpdateView, DeleteView
 
-from .forms import RegisterForm, LoginForm, RecProUpdateForm, SeekProUpdateForm, JobPostForm, JobApplyForm
-from .models import CategoryModel, RecruiterProfileModel, SeekerProfileModel, JobPostModel, JobApplyModel
+from .forms import *
+from .models import *
 
-
-class FormDataContextMixin:
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+#---> Form data
+class FormDataContext_Mixin:                            # This code is a custom Django mixin designed to pass the form—found 
+    def get_context_data(self, **kwargs):               # within the context of a Django generic class-based view
+        context = super().get_context_data(**kwargs)    # —to the template under an additional key named 'data'.
         context['data'] = context.get('form')
         return context
 
 
+#-----> Home View
 class HomeView(TemplateView):
     template_name = 'home.html'
 
@@ -28,7 +29,8 @@ class HomeView(TemplateView):
         return context
 
 
-class RegisterView(FormDataContextMixin, FormView):
+#-----> User Registation View
+class RegisterView(FormDataContext_Mixin, FormView):
     template_name = 'auth/register.html'
     form_class = RegisterForm
     success_url = reverse_lazy('login_page')
@@ -39,10 +41,11 @@ class RegisterView(FormDataContextMixin, FormView):
         return super().form_valid(form)
 
 
-class UserLoginView(FormDataContextMixin, LoginView):
+#-----> User Login View
+class UserLoginView(FormDataContext_Mixin, LoginView):
     template_name = 'auth/login.html'
     authentication_form = LoginForm
-    redirect_authenticated_user = True
+    redirect_authenticated_user = True      # If a user is already logged in and attempts to access the login page, Django will redirect them elsewhere instead of keeping them on the login page.
 
     def form_valid(self, form):
         messages.success(self.request, 'You have signed in successfully.')
@@ -52,15 +55,27 @@ class UserLoginView(FormDataContextMixin, LoginView):
         return self.get_redirect_url() or reverse_lazy('home')
 
 
+#------> User Logout View
 class UserLogoutView(LoginRequiredMixin, LogoutView):
     next_page = reverse_lazy('login_page')
 
 
+#------------->Display user profile View
 class ProfileView(LoginRequiredMixin, TemplateView):
     template_name = 'profile.html'
 
 
-class ProfileUpdateView(FormDataContextMixin, LoginRequiredMixin, FormView):
+"""
+FormView —> for displaying forms and handling submissions.
+LoginRequiredMixin —> for preventing profile updates unless the user is logged in.
+dispatch() —> for retrieving the relevant profile before the request processing begins.
+get_form_class() —> for selecting a form based on the user type.
+get_form_kwargs() —> for passing the specific model instance to be used in the form.
+form_valid() —> for saving a valid form and displaying a success message.
+"""
+
+#-------------> Update User profile View
+class ProfileUpdateView(FormDataContext_Mixin, LoginRequiredMixin, FormView):
     template_name = 'profile-update.html'
     success_url = reverse_lazy('profile')
 
@@ -68,9 +83,11 @@ class ProfileUpdateView(FormDataContextMixin, LoginRequiredMixin, FormView):
         if not request.user.is_authenticated:
             return super().dispatch(request, *args, **kwargs)
         if request.user.user_type == 'Recruiter':
-            self.profile_instance = RecruiterProfileModel.objects.filter(recruiter=request.user).first()
-        else:
+            self.profile_instance = RecruiterProfileModel.objects.filter(recruiter=request.user).first()    #---> 'first()' Returns the first matching object from the QuerySet. 
+        elif request.user.user_type == 'Seeker':                                                                                               #----> Returns None if no object is found.
             self.profile_instance = SeekerProfileModel.objects.filter(seeker=request.user).first()
+        else:
+            return super().dispatch(request, *args, **kwargs)
         return super().dispatch(request, *args, **kwargs)
 
     def get_form_class(self):
@@ -90,6 +107,7 @@ class ProfileUpdateView(FormDataContextMixin, LoginRequiredMixin, FormView):
         profile.save()
         messages.success(self.request, 'Your profile has been updated.')
         return super().form_valid(form)
+
 
 
 class RecruiterRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
@@ -114,7 +132,8 @@ class SeekerRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
         return redirect('jb_list')
 
 
-class JobPostCreateView(FormDataContextMixin, RecruiterRequiredMixin, FormView):
+#-------------> Post a job View
+class JobPostCreateView(FormDataContext_Mixin, RecruiterRequiredMixin, FormView):
     template_name = 'jobs/jb-post.html'
     form_class = JobPostForm
     success_url = reverse_lazy('jb_list')
@@ -132,7 +151,11 @@ class JobPostCreateView(FormDataContextMixin, RecruiterRequiredMixin, FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context.update({'data': context['form'], 'page_title': 'Post a Job', 'submit_label': 'Publish Job'})
+        context.update({
+            'data': context['form'], 
+            'page_title': 'Post a Job', 
+            'submit_label': 'Publish Job'
+        })
         return context
 
 
@@ -141,7 +164,8 @@ class JobOwnerMixin(RecruiterRequiredMixin):
         return JobPostModel.objects.filter(posted_by__recruiter=self.request.user).select_related('posted_by', 'category')
 
 
-class JobPostUpdateView(FormDataContextMixin, JobOwnerMixin, UpdateView):
+#-------------> Update job View
+class JobPostUpdateView(FormDataContext_Mixin, JobOwnerMixin, UpdateView):
     model = JobPostModel
     form_class = JobPostForm
     pk_url_kwarg = 'u_id'
@@ -154,10 +178,14 @@ class JobPostUpdateView(FormDataContextMixin, JobOwnerMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context.update({'data': context['form'], 'page_title': 'Update Job', 'submit_label': 'Save Changes'})
+        context.update({
+            'data': context['form'], 
+            'page_title': 'Update Job', 
+            'submit_label': 'Save Changes'
+        })
         return context
 
-
+#--------> Job delete View
 class JobPostDeleteView(JobOwnerMixin, DeleteView):
     model = JobPostModel
     pk_url_kwarg = 'd_id'
@@ -170,6 +198,7 @@ class JobPostDeleteView(JobOwnerMixin, DeleteView):
         return super().form_valid(form)
 
 
+#------------->Display all jobs View
 class JobListView(ListView):
     model = JobPostModel
     template_name = 'jobs/jb-list.html'
@@ -198,7 +227,8 @@ class JobListView(ListView):
         return context
 
 
-class JobApplyView(FormDataContextMixin, SeekerRequiredMixin, FormView):
+#--------> Apply for job View
+class JobApplyView(FormDataContext_Mixin, SeekerRequiredMixin, FormView):
     template_name = 'jb-apply.html'
     form_class = JobApplyForm
 
@@ -224,6 +254,7 @@ class JobApplyView(FormDataContextMixin, SeekerRequiredMixin, FormView):
         return context
 
 
+#---------> My application View
 class MyApplicationsView(SeekerRequiredMixin, ListView):
     template_name = 'my-applied.html'
     context_object_name = 'data'
@@ -237,6 +268,7 @@ class MyApplicationsView(SeekerRequiredMixin, ListView):
         ).order_by('-apply_at', '-id')
 
 
+#-------> job apply candidate View
 class CandidateListView(RecruiterRequiredMixin, ListView):
     template_name = 'candidate.html'
     context_object_name = 'data'
@@ -258,7 +290,8 @@ class CandidateListView(RecruiterRequiredMixin, ListView):
         return context
 
 
-class PasswordChangeView(FormDataContextMixin, LoginRequiredMixin, FormView):
+#--------->Change user password View
+class PasswordChangeView(FormDataContext_Mixin, LoginRequiredMixin, FormView):
     template_name = 'auth/password_change.html'
     form_class = PasswordChangeForm
     success_url = reverse_lazy('profile')

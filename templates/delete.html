@@ -1,12 +1,26 @@
 {% extends 'master/base.html' %}
-{% block title %}Delete Job | JobHub{% endblock %}
+{% block title %}
+  Delete Job | JobHub
+{% endblock %}
 {% block content %}
-<section class="section"><div class="container"><div class="row justify-content-center"><div class="col-lg-6">
-  <div class="card-modern p-4 p-md-5 text-center">
-    <div class="rounded-circle bg-danger-subtle text-danger d-inline-flex align-items-center justify-content-center mx-auto mb-3" style="width:68px;height:68px"><span class="fs-2">!</span></div>
-    <span class="eyebrow">Confirm action</span><h1 class="h3 fw-bold mt-3">Delete this job post?</h1>
-    <p class="text-muted-custom">You are about to permanently delete <strong>{{ object.jb_title }}</strong>. This action cannot be undone.</p>
-    <form method="post" class="d-flex justify-content-center gap-2 mt-4">{% csrf_token %}<button type="submit" class="btn btn-danger btn-pill px-4">Yes, delete job</button><a href="{% url 'jb_list' %}" class="btn btn-light btn-pill px-4">Cancel</a></form>
-  </div>
-</div></div></div></section>
+  <section class="section">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-6">
+          <div class="card-modern p-4 p-md-5 text-center">
+            <div class="rounded-circle bg-danger-subtle text-danger d-inline-flex align-items-center justify-content-center mx-auto mb-3" style="width:68px;height:68px">
+              <span class="fs-2">!</span>
+            </div>
+            <span class="eyebrow">Confirm action</span><h1 class="h3 fw-bold mt-3">Delete this job post?</h1>
+            <p class="text-muted-custom">
+              You are about to permanently delete <strong>{{ object.jb_title }}</strong>. This action cannot be undone.
+            </p>
+            <form method="post" class="d-flex justify-content-center gap-2 mt-4">
+              {% csrf_token %}<button type="submit" class="btn btn-danger btn-pill px-4">Yes, delete job</button><a href="{% url 'jb_list' %}" class="btn btn-light btn-pill px-4">Cancel</a>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 {% endblock %}

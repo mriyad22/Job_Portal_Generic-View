@@ -1,1 +1,36 @@
-{% extends 'master/base.html' %}{% block title %}Update Profile | JobHub{% endblock %}{% block content %}<section class="section pt-5"><div class="container"><div class="row justify-content-center"><div class="col-lg-7"><div class="mb-4"><span class="eyebrow">Profile settings</span><h1 class="fw-bold mt-2">Update your profile</h1><p class="text-muted-custom">Keep your information accurate and up to date.</p></div><div class="card-modern p-4 p-md-5"><form method="post" enctype="multipart/form-data">{% csrf_token %}{% for field in data %}<div class="mb-3">{{ field.label_tag }}{{ field }}{% if field.errors %}<div class="text-danger small mt-1">{{ field.errors|striptags }}</div>{% endif %}</div>{% endfor %}<div class="d-flex gap-2"><button type="submit" class="btn btn-primary btn-pill">Save Changes</button><a href="{% url 'profile' %}" class="btn btn-light btn-pill">Cancel</a></div></form></div></div></div></div></section>{% endblock %}
+{% extends 'master/base.html' %}
+{% block title %}
+  Update Profile | JobHub
+{% endblock %}
+{% block content %}
+  <section class="section pt-5">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-7">
+          <div class="mb-4">
+            <span class="eyebrow">Profile settings</span><h1 class="fw-bold mt-2">Update your profile</h1><p class="text-muted-custom">Keep your information accurate and up to date.</p>
+          </div>
+          <div class="card-modern p-4 p-md-5">
+
+            <form method="post" enctype="multipart/form-data">
+              {% csrf_token %}
+              {% for field in data %}
+                <div class="mb-3">
+                  {{ field.label_tag }}{{ field }}
+                  {% if field.errors %}
+                    <div class="text-danger small mt-1">{{ field.errors|striptags }}</div>
+                  {% endif %}
+                </div>
+              {% endfor %}
+              <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary btn-pill">Save Changes</button>
+                <a href="{% url 'profile' %}" class="btn btn-light btn-pill">Cancel</a>
+              </div>
+            </form>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}

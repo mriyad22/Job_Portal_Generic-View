@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     'portal',
 ]
 
@@ -50,7 +51,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-AUTH_USER_MODEL = 'portal.UserModel'
 
 ROOT_URLCONF = 'config.urls'
 
@@ -129,5 +129,7 @@ MAILERS = {
     },
 }
 
-LOGIN_REDIRECT_URL = 'home'
-LOGOUT_REDIRECT_URL = 'login_page'
+AUTH_USER_MODEL = 'portal.UserModel'
+
+LOGIN_REDIRECT_URL = 'home'     # Where to go after login
+LOGOUT_REDIRECT_URL = 'login_page'      # Where to go after logout

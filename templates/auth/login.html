@@ -1,2 +1,33 @@
-{% extends 'master/base.html' %}{% block title %}Login | JobHub{% endblock %}
-{% block content %}<div class="auth-shell py-5"><div class="container"><div class="auth-card card-modern p-4 p-md-5"><div class="text-center mb-4"><span class="eyebrow">Welcome back</span><h2 class="fw-bold mt-3">Sign in to JobHub</h2><p class="text-muted-custom">Access your profile and career opportunities.</p></div><form method="post" novalidate>{% csrf_token %}{% for field in data %}<div class="mb-3">{{ field.label_tag }}{{ field }}{% if field.errors %}<div class="text-danger small mt-1">{{ field.errors|striptags }}</div>{% endif %}</div>{% endfor %}{% if data.non_field_errors %}<div class="alert alert-danger rounded-4">{{ data.non_field_errors }}</div>{% endif %}<button class="btn btn-primary btn-pill w-100 py-2" type="submit">Login</button></form><p class="text-center text-muted-custom mt-4 mb-0">Don't have an account? <a href="{% url 'register_page' %}" class="fw-semibold">Create one</a></p></div></div></div>{% endblock %}
+{% extends 'master/base.html' %}
+{% block title %}
+  Login | JobHub
+{% endblock %}
+{% block content %}
+  <div class="auth-shell py-5">
+    <div class="container">
+      <div class="auth-card card-modern p-4 p-md-5">
+        <div class="text-center mb-4">
+          <span class="eyebrow">Welcome back</span><h2 class="fw-bold mt-3">Sign in to JobHub</h2><p class="text-muted-custom">Access your profile and career opportunities.</p>
+        </div>
+
+        <form method="post" novalidate>
+          {% csrf_token %}
+          {% for field in data %}
+            <div class="mb-3">
+              {{ field.label_tag }}{{ field }}{% if field.errors %}
+                <div class="text-danger small mt-1">{{ field.errors|striptags }}</div>
+              {% endif %}
+            </div>
+          {% endfor %}
+          {% if data.non_field_errors %}
+            <div class="alert alert-danger rounded-4">{{ data.non_field_errors }}</div>
+          {% endif %}<button class="btn btn-primary btn-pill w-100 py-2" type="submit">Login</button>
+        </form>
+        
+        <p class="text-center text-muted-custom mt-4 mb-0">
+          Don't have an account? <a href="{% url 'register_page' %}" class="fw-semibold">Create one</a>
+        </p>
+      </div>
+    </div>
+  </div>
+{% endblock %}

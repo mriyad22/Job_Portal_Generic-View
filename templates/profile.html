@@ -1,1 +1,92 @@
-{% extends 'master/base.html' %}{% block title %}My Profile | JobHub{% endblock %}{% block content %}<section class="section pt-5"><div class="container"><div class="row justify-content-center"><div class="col-lg-8"><div class="card-modern overflow-hidden"><div class="p-4 p-md-5 bg-primary text-white"><span class="badge rounded-pill bg-white text-primary">{{ request.user.user_type }}</span><h1 class="fw-bold mt-3 mb-1">My Profile</h1><p class="mb-0 opacity-75">Manage your personal and professional information.</p></div><div class="p-4 p-md-5">{% if request.user.user_type == 'Recruiter' %}{% if request.user.recruiter_profile.logo %}<img src="{{ request.user.recruiter_profile.logo.url }}" class="avatar mb-3" alt="Company logo">{% else %}<div class="avatar d-flex align-items-center justify-content-center fs-1 mb-3">🏢</div>{% endif %}<h3 class="fw-bold">{{ request.user.display_name }}</h3><p class="text-muted-custom mb-4">{{ request.user.recruiter_profile.company_name }}</p><div class="row g-3"><div class="col-md-6"><div class="p-3 rounded-4 bg-light"><small class="text-muted-custom">Company</small><div class="fw-semibold">{{ request.user.recruiter_profile.company_name }}</div></div></div><div class="col-md-6"><div class="p-3 rounded-4 bg-light"><small class="text-muted-custom">Phone</small><div class="fw-semibold">{{ request.user.recruiter_profile.phone }}</div></div></div><div class="col-12"><div class="p-3 rounded-4 bg-light"><small class="text-muted-custom">Address</small><div class="fw-semibold">{{ request.user.recruiter_profile.address }}</div></div></div></div>{% else %}{% if request.user.seeker_profile.image %}<img src="{{ request.user.seeker_profile.image.url }}" class="avatar mb-3" alt="Profile image">{% else %}<div class="avatar d-flex align-items-center justify-content-center fs-1 mb-3">👤</div>{% endif %}<h3 class="fw-bold">{{ request.user.display_name }}</h3><p class="text-muted-custom mb-4">{{ request.user.email }}</p><div class="row g-3"><div class="col-md-6"><div class="p-3 rounded-4 bg-light"><small class="text-muted-custom">Phone</small><div class="fw-semibold">{{ request.user.seeker_profile.phone }}</div></div></div><div class="col-12"><div class="p-3 rounded-4 bg-light"><small class="text-muted-custom">Address</small><div class="fw-semibold">{{ request.user.seeker_profile.address }}</div></div></div></div>{% endif %}<div class="d-flex flex-wrap gap-2 mt-4"><a href="{% url 'profile_update' %}" class="btn btn-primary btn-pill">Update Profile</a><a href="{% url 'passwd_change' %}" class="btn btn-outline-dark btn-pill">Change Password</a></div></div></div></div></div></section>{% endblock %}
+{% extends 'master/base.html' %}
+
+{% block title %}My Profile | JobHub{% endblock %}
+
+{% block content %}
+<section class="section pt-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card-modern overflow-hidden">
+                    
+                    <!-- Header Banner -->
+                    <div class="p-4 p-md-5 bg-primary text-white">
+                        <span class="badge rounded-pill bg-white text-primary">{{ request.user.user_type }}</span>
+                        <h1 class="fw-bold mt-3 mb-1">My Profile</h1>
+                        <p class="mb-0 opacity-75">Manage your personal and professional information.</p>
+                    </div> <!-- Fix: Added missing closing div for header banner -->
+
+                    <!-- Body Content -->
+                    <div class="p-4 p-md-5">
+                        {% if request.user.user_type == 'Recruiter' %}
+                            <!-- Recruiter Layout -->
+                            {% if request.user.recruiter_profile.logo %}
+                                <img src="{{ request.user.recruiter_profile.logo.url }}" class="avatar mb-3" alt="Company logo">
+                            {% else %}
+                                <div class="avatar d-flex align-items-center justify-content-center fs-1 mb-3">🏢</div>
+                            {% endif %}
+                            
+                            <h3 class="fw-bold">{{ request.user.display_name }}</h3>
+                            <p class="text-muted-custom mb-4">{{ request.user.recruiter_profile.company_name }}</p>
+                            
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="p-3 rounded-4 bg-light">
+                                        <small class="text-muted-custom">Company</small>
+                                        <div class="fw-semibold">{{ request.user.recruiter_profile.company_name }}</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="p-3 rounded-4 bg-light">
+                                        <small class="text-muted-custom">Phone</small>
+                                        <div class="fw-semibold">{{ request.user.recruiter_profile.phone }}</div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="p-3 rounded-4 bg-light">
+                                        <small class="text-muted-custom">Address</small>
+                                        <div class="fw-semibold">{{ request.user.recruiter_profile.address }}</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        {% else %}
+                            <!-- Seeker Layout -->
+                            {% if request.user.seeker_profile.image %}
+                                <img src="{{ request.user.seeker_profile.image.url }}" class="avatar mb-3" alt="Profile image">
+                            {% else %}
+                                <div class="avatar d-flex align-items-center justify-content-center fs-1 mb-3">👤</div>
+                            {% endif %}
+                            
+                            <h3 class="fw-bold">{{ request.user.display_name }}</h3>
+                            <p class="text-muted-custom mb-4">{{ request.user.email }}</p>
+                            
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="p-3 rounded-4 bg-light">
+                                        <small class="text-muted-custom">Phone</small>
+                                        <div class="fw-semibold">{{ request.user.seeker_profile.phone }}</div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="p-3 rounded-4 bg-light">
+                                        <small class="text-muted-custom">Address</small>
+                                        <div class="fw-semibold">{{ request.user.seeker_profile.address }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        <!-- Action Buttons -->
+                        <div class="d-flex flex-wrap gap-2 mt-4">
+                            <a href="{% url 'profile_update' %}" class="btn btn-primary btn-pill">Update Profile</a>
+                            <a href="{% url 'passwd_change' %}" class="btn btn-outline-dark btn-pill">Change Password</a>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

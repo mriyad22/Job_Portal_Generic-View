@@ -1,24 +1,41 @@
 {% extends 'master/base.html' %}
-{% block title %}{{ page_title|default:'Post a Job' }} | JobHub{% endblock %}
+{% block title %}
+  {{ page_title|default:'Post a Job' }} | JobHub
+{% endblock %}
 {% block content %}
-<section class="section pt-5">
-  <div class="container">
-    <div class="row justify-content-center"><div class="col-lg-8 col-xl-7">
-      <div class="mb-4"><span class="eyebrow">Recruiter workspace</span><h1 class="display-title h2 mt-3">{{ page_title|default:'Create a job post' }}</h1><p class="text-muted-custom">Share clear role details to help candidates understand the opportunity.</p></div>
-      <div class="card-modern p-4 p-md-5">
-        <form method="post" novalidate>{% csrf_token %}
-          {% if data.non_field_errors %}<div class="alert alert-danger rounded-4">{{ data.non_field_errors }}</div>{% endif %}
-          <div class="row g-3">
-          {% for field in data %}<div class="col-12 {% if field.name == 'jb_title' or field.name == 'category' or field.name == 'shift' or field.name == 'opening' or field.name == 'salary' or field.name == 'deadline' %}col-md-6{% endif %}">
-            {{ field.label_tag }}{{ field }}
-            {% if field.help_text %}<div class="field-help mt-1">{{ field.help_text|safe }}</div>{% endif %}
-            {% if field.errors %}<div class="text-danger small mt-1">{{ field.errors|striptags }}</div>{% endif %}
-          </div>{% endfor %}
+  <section class="section pt-5">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-8 col-xl-7">
+          <div class="mb-4">
+            <span class="eyebrow">Recruiter workspace</span><h1 class="display-title h2 mt-3">{{ page_title|default:'Create a job post' }}</h1><p class="text-muted-custom">Share clear role details to help candidates understand the opportunity.</p>
           </div>
-          <div class="d-flex flex-wrap gap-2 mt-4"><button type="submit" class="btn btn-primary btn-pill px-4">{{ submit_label|default:'Publish Job' }}</button><a href="{% url 'jb_list' %}" class="btn btn-light btn-pill px-4">Cancel</a></div>
-        </form>
+          <div class="card-modern p-4 p-md-5">
+            <form method="post" novalidate>
+              {% csrf_token %}
+              {% if data.non_field_errors %}
+                <div class="alert alert-danger rounded-4">{{ data.non_field_errors }}</div>
+              {% endif %}
+              <div class="row g-3">
+                {% for field in data %}
+                  <div class="col-12 {% if field.name == 'jb_title' or field.name == 'category' or field.name == 'shift' or field.name == 'opening' or field.name == 'salary' or field.name == 'deadline' %}col-md-6{% endif %}">
+                    {{ field.label_tag }}{{ field }}
+                    {% if field.help_text %}
+                      <div class="field-help mt-1">{{ field.help_text|safe }}</div>
+                    {% endif %}
+                    {% if field.errors %}
+                      <div class="text-danger small mt-1">{{ field.errors|striptags }}</div>
+                    {% endif %}
+                  </div>
+                {% endfor %}
+              </div>
+              <div class="d-flex flex-wrap gap-2 mt-4">
+                <button type="submit" class="btn btn-primary btn-pill px-4">{{ submit_label|default:'Publish Job' }}</button><a href="{% url 'jb_list' %}" class="btn btn-light btn-pill px-4">Cancel</a>
+              </div>
+            </form>
+          </div>
+        </div>
       </div>
-    </div></div>
-  </div>
-</section>
+    </div>
+  </section>
 {% endblock %}
